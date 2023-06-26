@@ -7,32 +7,26 @@ if searchOption == "Search By Name"
         ShowMessageBox("Operation cancelled")
         return
 
-    contactFound = false
     currentNode = head
 
     while currentNode is not null
         if currentNode.name == nameToDelete
-            contactFound = true
-            break
+            RemoveContact(currentNode)
+            ShowMessageBox("Contact deleted successfully")
+            return
 
         currentNode = currentNode.next
 
-    if contactFound
-        deleteOption = ShowModalDialog("Are you sure that you want to delete the contact?", "Delete Contact", ["Delete", "Cancel"])
+    ShowMessageBox("Contact with this name not found.")
 
-        if deleteOption == "Delete"
-            if currentNode.prev is not null
-                currentNode.prev.next = currentNode.next
-                if currentNode.next is not null
-                    currentNode.next.prev = currentNode.prev
-            else
-                head = currentNode.next
-                if currentNode.next is not null
-                    currentNode.next.prev = null
-
-            delete currentNode
-            ShowMessageBox("Contact deleted successfully")
-        else
-            ShowMessageBox("Operation cancelled")
+function RemoveContact(node)
+    if node.prev is not null
+        node.prev.next = node.next
+        if node.next is not null
+            node.next.prev = node.prev
     else
-        ShowMessageBox("Contact with this name not found.")
+        head = node.next
+        if node.next is not null
+            node.next.prev = null
+
+    delete node
