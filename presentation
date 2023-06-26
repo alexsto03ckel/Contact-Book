@@ -1,0 +1,44 @@
+searchDialog = CreateMessageDialog("Choose an option to search:", "Delete Contact", wxYES_NO | wxCANCEL)
+searchDialog.SetYesNoLabels("Search By Name", "Search By Number")
+searchOption = searchDialog.ShowModal()
+
+if searchOption == wxID_YES  // search by name
+    nameInput = GetTextFromUser("Enter the name to delete:", "Delete Contact")
+    nameToDelete = nameInput.ToStdString()
+
+    if nameToDelete == ""
+        ShowMessageBox("Operation cancelled")
+        return
+
+    temp = head
+    prevNode = null
+    contactFound = false
+
+    while temp != null
+        if temp.name == nameToDelete
+            contactFound = true
+            break
+        prevNode = temp
+        temp = temp.next
+
+    if contactFound
+        deleteDialog = CreateMessageDialog("Are you sure that you want to delete the contact?", "Delete Contact", wxYES_NO)
+        deleteDialog.SetYesNoLabels("Delete", "Cancel")
+        deleteOption = deleteDialog.ShowModal()
+
+        if deleteOption == wxID_YES
+            if prevNode != null  // not first contact
+                prevNode.next = temp.next  // skip the contact to be deleted
+                if temp.next != null  // not last contact
+                    temp.next.prev = prevNode
+            else  // first contact
+                head = temp.next
+                if temp.next != null  // not only 1 contact
+                    temp.next.prev = null  // prev after the eliminated contact to null
+
+            delete temp
+            ShowMessageBox("Contact deleted successfully")
+        else
+            ShowMessageBox("Operation cancelled")
+    else
+        ShowMessageBox("Contact with this name not found.")
