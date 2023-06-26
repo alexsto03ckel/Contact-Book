@@ -1,42 +1,36 @@
-searchDialog = CreateMessageDialog("Choose an option to search:", "Delete Contact", wxYES_NO | wxCANCEL)
-searchDialog.SetYesNoLabels("Search By Name", "Search By Number")
-searchOption = searchDialog.ShowModal()
+searchOption = ShowModalDialog("Choose an option to search:", "Delete Contact", ["Search By Name", "Search By Number"])
 
-if searchOption == wxID_YES  // search by name
-    nameInput = GetTextFromUser("Enter the name to delete:", "Delete Contact")
-    nameToDelete = nameInput.ToStdString()
+if searchOption == "Search By Name"
+    nameToDelete = GetTextFromUser("Enter the name to delete:", "Delete Contact")
 
-    if nameToDelete == ""
+    if nameToDelete is empty
         ShowMessageBox("Operation cancelled")
         return
 
-    temp = head
-    prevNode = null
     contactFound = false
+    currentNode = head
 
-    while temp != null
-        if temp.name == nameToDelete
+    while currentNode is not null
+        if currentNode.name == nameToDelete
             contactFound = true
             break
-        prevNode = temp
-        temp = temp.next
+
+        currentNode = currentNode.next
 
     if contactFound
-        deleteDialog = CreateMessageDialog("Are you sure that you want to delete the contact?", "Delete Contact", wxYES_NO)
-        deleteDialog.SetYesNoLabels("Delete", "Cancel")
-        deleteOption = deleteDialog.ShowModal()
+        deleteOption = ShowModalDialog("Are you sure that you want to delete the contact?", "Delete Contact", ["Delete", "Cancel"])
 
-        if deleteOption == wxID_YES
-            if prevNode != null  // not first contact
-                prevNode.next = temp.next  // skip the contact to be deleted
-                if temp.next != null  // not last contact
-                    temp.next.prev = prevNode
-            else  // first contact
-                head = temp.next
-                if temp.next != null  // not only 1 contact
-                    temp.next.prev = null  // prev after the eliminated contact to null
+        if deleteOption == "Delete"
+            if currentNode.prev is not null
+                currentNode.prev.next = currentNode.next
+                if currentNode.next is not null
+                    currentNode.next.prev = currentNode.prev
+            else
+                head = currentNode.next
+                if currentNode.next is not null
+                    currentNode.next.prev = null
 
-            delete temp
+            delete currentNode
             ShowMessageBox("Contact deleted successfully")
         else
             ShowMessageBox("Operation cancelled")
